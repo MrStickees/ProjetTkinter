@@ -2,7 +2,9 @@ import uuid, os,json
 
 class Data:
     def __init__(self, name_file):
-        self.data = {}
+        self.data = {
+            "history": []
+        }
         self.name_file = name_file
         
     def __str__(self):
