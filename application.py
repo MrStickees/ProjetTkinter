@@ -31,6 +31,18 @@ class Application:
         for message in self.data.get_history():
             menu.add_command(label=message)
 
+        menu.add_separator()
+        menu.add_command(label="Voir plus", command=self.show_history)
+        menu.add_command(label="Tout supprimer", command=lambda: (self.data.clear_history(), self.clear_window()))
+
+    def show_history(self):
+        self.clear_window()
+        self.history = self.data.get_history()
+        self.history.reverse()
+        self.history = self.history[:10]
+        for message in self.history:
+            Label(self.window, text=message).pack()
+
     def clear_window(self):
         for widget in self.window.winfo_children():
             widget.destroy()
