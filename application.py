@@ -1,4 +1,4 @@
-from tkinter import Tk, Menu, Frame, Text, Button, Label, END
+from tkinter import Tk, Menu, Text, END, BOTTOM, Frame
 from tkinter import messagebox
 from tkinter import ttk
 from data import Data
@@ -63,25 +63,31 @@ class Application:
     
     def show_history(self):
         self.clear_window()
+
         self.history_frame = Frame(self.window)
+
         self.history = self.data.get_history()
         for index, message in enumerate(self.history):
             ttk.Label(self.history_frame, text=message[0]).grid(row=index, column=0, pady=5, padx=5)
             ttk.Button(self.history_frame, text="X", command=lambda index=index: self.delete_history(index)).grid(row=index, column=1, pady=5)
+            ttk.Button(self.history_frame, text="Voir", command=lambda message=message: self.show_result(message[0], message[1])).grid(row=index, column=2, pady=5)
+
+        ttk.Button(self.window, text="Retour", command=self.show_main).pack(pady=15, side=BOTTOM)
 
         self.history_frame.pack()
 
     def show_main(self):
         self.clear_window()
-        self.main_frame = Frame(self.window)    
-        self.main_frame.pack()
+        self.main_frame = Frame(self.window)
 
-        ttk.Label(self.main_frame, text="Entrez votre message :").pack(pady=10)
+        ttk.Label(self.main_frame, text="Entrez votre message :").pack(expand=True, pady=10)
 
         self.result_text = Text(self.main_frame, height=4, width=60)
         self.result_text.pack(expand=True, pady=10)
 
-        ttk.Button(self.main_frame, text="Envoyer", command=lambda: threading.Thread(target=self.send_message).start()).pack()
+        self.main_frame.pack(expand=True, pady=50)
+
+        ttk.Button(self.window, text="Envoyer", command=lambda: threading.Thread(target=self.send_message).start()).pack(pady=10, side=BOTTOM)
 
     def clear_window(self):
         for widget in self.window.winfo_children():
@@ -103,18 +109,14 @@ class Application:
 
     def show_result(self, message, result):
         self.clear_window()
-
-        self.result_frame = Frame(self.window)
-        self.result_frame.pack()
-
-        self.message = Text(self.result_frame, height=4, width=60)
+        self.message = Text(self.window, height=4, width=60)
         self.message.insert(END, message)
         self.message.pack(pady=10)
 
-        ttk.Label(self.result_frame, text=result[0]["generated_text"]).pack(pady=10)
+        ttk.Label(self.window, text=result[0]["generated_text"]).pack(pady=10)
 
-        ttk.Button(self.result_frame, text="Relancer le prompt", command=lambda: threading.Thread(target=self.relaunch_prompt, args=(message,)).start()).pack(pady=5)
-        ttk.Button(self.result_frame, text="Retour", command=self.show_main).pack(pady=5)
+        ttk.Button(self.window, text="Relancer le prompt", command=lambda: threading.Thread(target=self.relaunch_prompt, args=(message,)).start()).pack(pady=5)
+        ttk.Button(self.window, text="Retour", command=self.show_main).pack(pady=5)
 
     def relaunch_prompt(self, message):
         self.data.delete_history_message(message)
@@ -125,7 +127,3 @@ class Application:
         self.data.add_history(message, result)
 
         self.show_result(message, result)
-
-if __name__ == "__main__":
-    app = Application("data.json")
-    app.main()

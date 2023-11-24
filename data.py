@@ -1,4 +1,4 @@
-import uuid, os,json
+import os,json
 
 class Data:
     def __init__(self, name_file):

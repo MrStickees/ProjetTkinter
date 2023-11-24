@@ -13,8 +13,3 @@ class Request:
         request = {"inputs": request}
         r = requests.post(self.API_URL, headers=self.headers, json=request)
         return r.json()
-    
-if __name__ == "__main__":
-    data = Data("private/data.priv")
-    req = Request(data)
-    print(req.get("Hello, my name is"))
