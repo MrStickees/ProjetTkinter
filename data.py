@@ -9,10 +9,10 @@ class Data:
         return str(self.data)
     
     def load_data(self):
-        if not self.name_file in os.listdir():
+        if not self.name_file in os.listdir("private"):
             self.save_data()
             return
-        with open(self.name, 'r') as f:
+        with open(f"private/{self.name_file}", 'r') as f:
             self.data = json.load(f)
 
     def save_data(self):
@@ -20,6 +20,8 @@ class Data:
             json.dump(self.data, f, indent=4)
 
     def get_history(self):
+        print(self.data)
+
         return self.data["history"]
 
     def getToken(self):
