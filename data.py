@@ -20,14 +20,26 @@ class Data:
             json.dump(self.data, f, indent=4)
 
     def get_history(self):
-        print(self.data)
-
         return self.data["history"]
 
-    def getToken(self):
+    def get_token(self):
         with open("private/token.priv", "r") as f:
             return f.read()
         
     def clear_history(self):
         self.data["history"] = []
         self.save_data()
+
+    def delete_history(self, index):
+        self.data["history"].pop(index)
+        self.save_data()
+
+    def add_history(self, request, response):
+        self.data["history"].append([request, response])
+        self.save_data()
+
+    def delete_history_message(self, message):
+        for index, history in enumerate(self.data["history"]):
+            if history[0] == message:
+                self.delete_history(index)
+                return
