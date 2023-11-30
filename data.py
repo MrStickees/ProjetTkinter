@@ -1,15 +1,31 @@
 import os,json
 
+"""
+Class to manage the data (history, token, ...)
+
+self.data = {
+    "history": [
+        [
+            "My name\n",
+            [
+                {
+                    "generated_text": "My name is John.\n"
+                }
+            ]
+        ],   
+    ]
+}
+"""
+
+
 class Data:
     def __init__(self, name_file):
-        # Class to manage the data
         self.data = {
             "history": []
         }
         self.name_file = name_file
         
     def __str__(self):
-        # Return the data in string
         return str(self.data)
     
     def load_data(self):

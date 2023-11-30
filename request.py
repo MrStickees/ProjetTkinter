@@ -1,9 +1,7 @@
 import requests
-from data import Data
-import threading
 
+# Class to manage the request and use the inference API
 class Request:
-    # Class to make request to the API
     def __init__(self, data): 
         self.data = data
         self.TOKEN = data.get_token()
