@@ -6,16 +6,19 @@ from request import Request
 import threading
 
 class Application:
+    # Define the size of the window
     WIDTH = 1024
     HEIGHT = 768
 
     def __init__(self, name_data):
+        # Class to manage the application
         self.data = Data(name_data)
         self.data.load_data()
         self.request = Request(self.data)
         self.current_history = 0
 
     def main(self):
+        # Main function to run the application
         self.window = Tk()
         self.window.geometry(f"{self.WIDTH}x{self.HEIGHT}")
         self.window.title("Application")
@@ -30,11 +33,13 @@ class Application:
         self.window.mainloop()
 
     def on_close(self):
+        # Function to close the application with confirmation
         if messagebox.askokcancel("Quitter", "Voulez-vous vraiment quitter?"):
             self.data.save_data()
             self.window.destroy()
 
     def show_menu_bar(self):
+        # Show the menu bar
         self.menu_bar = Menu(self.window)
 
         self.history_menu = Menu(self.menu_bar, tearoff=0)
@@ -46,6 +51,7 @@ class Application:
         self.window.config(menu=self.menu_bar)
 
     def add_history(self, menu):
+        # Add the history in the menu
         self.history = self.data.get_history()
         self.history.reverse()
         for message in self.history[:10]:
@@ -53,15 +59,25 @@ class Application:
 
         menu.add_separator()
         menu.add_command(label="Voir plus", command=self.show_history)
-        menu.add_command(label="Tout supprimer", command=lambda: (self.data.clear_history(), self.clear_window()))
+        menu.add_command(label="Tout supprimer", command=self.clear_all_history)
 
     def shorten_message(self, message):
+        # Shorten the message
         if len(message) >= 7:
             message = message[:7] + "..."
         print(message)
         return message
     
+    def clear_all_history(self):
+        # Clear all the history
+        self.data.clear_history()
+        self.clear_window()
+        self.show_menu_bar()
+        self.show_main()
+        
+    
     def show_history(self):
+        # Show the history
         self.clear_window()
 
         self.history_frame = Frame(self.window)
@@ -77,6 +93,7 @@ class Application:
         self.history_frame.pack()
 
     def show_main(self):
+        # Show the main page
         self.clear_window()
         self.main_frame = Frame(self.window)
 
@@ -90,16 +107,19 @@ class Application:
         ttk.Button(self.window, text="Envoyer", command=lambda: threading.Thread(target=self.send_message).start()).pack(pady=10, side=BOTTOM)
 
     def clear_window(self):
+        # Clear the window
         for widget in self.window.winfo_children():
             widget.destroy()
         self.show_menu_bar()
 
     def delete_history(self, index):
+        # Delete a message from the history
         self.data.delete_history(index)
         self.clear_window()
         self.show_history()
 
     def send_message(self):
+        # Send a message to the API
         message = self.result_text.get("1.0", END)
         result = self.request.get(message)
 
@@ -108,6 +128,7 @@ class Application:
         self.show_result(message, result)
 
     def show_result(self, message, result):
+        # Show the result of the message
         self.clear_window()
         self.message = Text(self.window, height=4, width=60)
         self.message.insert(END, message)
@@ -119,6 +140,7 @@ class Application:
         ttk.Button(self.window, text="Retour", command=self.show_main).pack(pady=5)
 
     def relaunch_prompt(self, message):
+        # Relaunch the prompt
         self.data.delete_history_message(message)
 
         message = self.message.get("1.0", END)
